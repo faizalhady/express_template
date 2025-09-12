@@ -1,0 +1,1 @@
+export const getAllLogs = ` SELECT * from Logs`

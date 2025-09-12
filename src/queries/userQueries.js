@@ -1,0 +1,1 @@
+export const getAllUser = `SELECT * FROM users` 
