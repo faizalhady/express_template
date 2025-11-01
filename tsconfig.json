@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    /* -------------------------------------------------
+       File Structure & Output
+    --------------------------------------------------- */
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    /* -------------------------------------------------
+       Environment
+       - Node.js backend using ESM (import/export)
+       - Full ESNext features
+    --------------------------------------------------- */
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
+    "types": ["node"],
+
+    /* -------------------------------------------------
+       Output Helpers
+    --------------------------------------------------- */
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    /* -------------------------------------------------
+       Strict Type Checking
+    --------------------------------------------------- */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    /* -------------------------------------------------
+       Module & Import Behavior
+    --------------------------------------------------- */
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+
+    /* -------------------------------------------------
+       Optional Style Rules (commented — enable as needed)
+    --------------------------------------------------- */
+    // "noImplicitReturns": true,
+    // "noImplicitOverride": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
