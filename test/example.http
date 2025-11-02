@@ -1,0 +1,43 @@
+### 🧠 Get all example items
+GET http://localhost:5000/api/example/items
+Accept: application/json
+
+###
+
+### 🔍 Search example items (by title)
+GET http://localhost:5000/api/example/items?search=test
+Accept: application/json
+
+###
+
+### 🔢 Limit results
+GET http://localhost:5000/api/example/items?limit=5
+Accept: application/json
+
+###
+
+### 🆕 Create a new example item
+POST http://localhost:5000/api/example/items
+Content-Type: application/json
+
+{
+  "title": "My First Example Itemzzz",
+  "body": "This is a sample item for testing create endpoint."
+}
+
+###
+
+### ✏️ Update an example item
+PUT http://localhost:5000/api/example/items/1
+Content-Type: application/json
+
+{
+  "title": "Updated Example Item",
+  "body": "This item has been updated via API test."
+}
+
+###
+
+### ❌ Delete an example item
+DELETE http://localhost:5000/api/example/items/
+Accept: application/json
