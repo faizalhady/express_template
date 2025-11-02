@@ -1,5 +1,5 @@
 import type { Request, Response } from "express"
-import { connectDB } from "@/config/db.js"
+import { connectDB } from "@/config/db"
 
 /**
  * Controller: GET /health

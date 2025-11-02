@@ -2,30 +2,46 @@ import sql from "mssql"
 import dotenv from "dotenv"
 dotenv.config()
 
-// ✅ Centralized SQL config
+// ✅ Detect authentication type
+const isTrusted = process.env.SQL_TRUSTED_CONNECTION === "true"
+
+// ✅ Build config dynamically
 const dbConfig: sql.config = {
   user: process.env.SQL_USER!,
   password: process.env.SQL_PASSWORD!,
   server: process.env.SQL_SERVER!,
+  port: process.env.SQL_PORT ? parseInt(process.env.SQL_PORT) : 1433,
   database: process.env.SQL_DATABASE!,
-  options: { trustServerCertificate: true },
+  options: {
+    trustServerCertificate: true,
+  },
+
+  ...(isTrusted
+    ? {
+      // 🔒 Windows Authentication
+      authentication: {
+        type: "ntlm",
+        options: {
+          domain: process.env.SQL_DOMAIN || "", // optional
+          userName: process.env.SQL_USER || "",
+          password: process.env.SQL_PASSWORD || "",
+        },
+      },
+    }
+    : {
+      // 🔐 SQL Authentication
+      user: process.env.SQL_USER!,
+      password: process.env.SQL_PASSWORD!,
+    }),
 }
 
 // Global pool reference
 let pool: sql.ConnectionPool | null = null
-
-// Flag to prevent reconnect loops
 let isConnecting = false
 
-/* -------------------------------------------------
-   Create / Reuse / Reconnect SQL Pool
---------------------------------------------------- */
 export async function connectDB(): Promise<sql.ConnectionPool> {
   try {
-    // Reuse existing valid connection
     if (pool && pool.connected) return pool
-
-    // Avoid race condition when multiple calls try to reconnect
     if (isConnecting) {
       await wait(500)
       return connectDB()
@@ -33,9 +49,8 @@ export async function connectDB(): Promise<sql.ConnectionPool> {
 
     isConnecting = true
     pool = await sql.connect(dbConfig)
-    console.log("✅ Connected to SQL Server")
+    console.log(`✅ Connected to SQL Server ${dbConfig.database} at ${dbConfig.server}`)
 
-    // Listen for pool errors (e.g. timeouts, disconnections)
     pool.on("error", async (err) => {
       console.error("⚠️ SQL Pool Error:", err)
       await reconnectPool()
@@ -50,9 +65,6 @@ export async function connectDB(): Promise<sql.ConnectionPool> {
   }
 }
 
-/* -------------------------------------------------
-   Helper: Reconnect Logic
---------------------------------------------------- */
 async function reconnectPool(): Promise<void> {
   console.log("♻️ Attempting SQL reconnect...")
   try {
@@ -64,19 +76,12 @@ async function reconnectPool(): Promise<void> {
     console.log("✅ SQL pool reconnected successfully")
   } catch (err) {
     console.error("❌ SQL reconnect failed:", err)
-    // Try again in 5 seconds
     setTimeout(reconnectPool, 5000)
   }
 }
 
-/* -------------------------------------------------
-   Utility: Wait helper
---------------------------------------------------- */
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-/* -------------------------------------------------
-   Exports
---------------------------------------------------- */
 export { sql, dbConfig }

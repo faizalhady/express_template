@@ -1,5 +1,6 @@
-import type { Request, Response } from "express"
-import * as queries from "@/queries/exampleQueries.js"
+import type { Request, Response, NextFunction } from "express";
+import * as queries from "@/queries/exampleQueries";
+import { sendSuccess } from "@/utils/responseHandler";
 
 /* -------------------------------------------------
    Request Type Definitions
@@ -7,25 +8,25 @@ import * as queries from "@/queries/exampleQueries.js"
 
 // Query: for GET /items
 interface GetItemsQuery {
-  limit?: string
-  search?: string
+  limit?: string;
+  search?: string;
 }
 
 // Body: for POST /items
 interface CreateItemBody {
-  title: string
-  body: string
+  title: string;
+  body: string;
 }
 
 // Body: for PUT /items/:id
 interface UpdateItemBody {
-  title?: string
-  body?: string
+  title?: string;
+  body?: string;
 }
 
 // Params: for routes with /:id
 interface IdParam {
-  id: string
+  id: string;
 }
 
 /* -------------------------------------------------
@@ -34,42 +35,64 @@ interface IdParam {
 
 export async function getItems(
   req: Request<unknown, unknown, unknown, GetItemsQuery>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) {
-  const { limit, search } = req.query
+  try {
+    const { limit, search } = req.query;
+    const data = await queries.getExampleItems(
+      limit ? parseInt(limit) : undefined,
+      search
+    );
 
-  const data = await queries.getExampleItems(
-    limit ? parseInt(limit) : undefined,
-    search
-  )
-
-  res.json(data)
+    return sendSuccess(res, data, "Items fetched successfully");
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function postItem(
   req: Request<unknown, unknown, CreateItemBody>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) {
-  const { title, body } = req.body
-  const newItem = await queries.createExampleItem(title, body)
-  res.json(newItem)
+  try {
+    const { title, body } = req.body;
+    const newItem = await queries.createExampleItem(title, body);
+
+    return sendSuccess(res, newItem, "Item created successfully");
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function putItem(
   req: Request<IdParam, unknown, UpdateItemBody>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) {
-  const id = parseInt(req.params.id)
-  const { title, body } = req.body
-  const updated = await queries.updateExampleItem(id, title, body)
-  res.json(updated)
+  try {
+    const id = parseInt(req.params.id);
+    const { title, body } = req.body;
+    const updated = await queries.updateExampleItem(id, title, body);
+
+    return sendSuccess(res, updated, "Item updated successfully");
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function deleteItem(
   req: Request<IdParam>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) {
-  const id = parseInt(req.params.id)
-  const msg = await queries.deleteExampleItem(id)
-  res.json(msg)
+  try {
+    const id = parseInt(req.params.id);
+    const msg = await queries.deleteExampleItem(id);
+
+    return sendSuccess(res, msg, "Item deleted successfully");
+  } catch (err) {
+    next(err);
+  }
 }
