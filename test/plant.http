@@ -1,0 +1,15 @@
+### 📄 Get all plants
+GET http://localhost:5000/api/plants
+Accept: application/json
+
+###
+
+### 🔍 Get plant by id
+GET http://localhost:5000/api/plants/1
+Accept: application/json
+
+###
+
+### ❌ Invalid id
+GET http://localhost:5000/api/plants/abc
+Accept: application/json

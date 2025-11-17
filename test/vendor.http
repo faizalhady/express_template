@@ -1,0 +1,27 @@
+### 📄 Get all vendors
+GET http://localhost:5000/api/vendors
+Accept: application/json
+
+###
+
+### 📄 Get active vendors only
+GET http://localhost:5000/api/vendors?isActive=true
+Accept: application/json
+
+###
+
+### 🔍 Search vendor by name
+GET http://localhost:5000/api/vendors?search=CRATING
+Accept: application/json
+
+###
+
+### 🔍 Get vendor by id
+GET http://localhost:5000/api/vendors/1
+Accept: application/json
+
+###
+
+### ❌ Invalid id
+GET http://localhost:5000/api/vendors/abc
+Accept: application/json

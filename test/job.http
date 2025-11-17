@@ -1,0 +1,82 @@
+### 🆕 Create a new job
+POST http://localhost:5000/api/jobs
+Content-Type: application/json
+
+{
+  "serialNumber": "ST-123456",
+  "model": "TOOL-ABC",
+  "workcellId": 1,
+  "vendorId": 1,
+  "areaId": 1,
+  "startTime": "2025-11-20T08:00:00.000Z",
+  "endTime": "2025-11-20T10:00:00.000Z"
+}
+
+###
+
+### 🆕 Create a job without optional fields
+POST http://localhost:5000/api/jobs
+Content-Type: application/json
+
+{
+  "serialNumber": "ST-999999",
+  "workcellId": 2
+}
+
+###
+
+### 📄 Get all jobs
+GET http://localhost:5000/api/jobs
+Accept: application/json
+
+###
+
+### 📄 Get jobs filtered by areaId
+GET http://localhost:5000/api/jobs?areaId=1
+Accept: application/json
+
+###
+
+### 📄 Get jobs filtered by workcellId
+GET http://localhost:5000/api/jobs?workcellId=1
+Accept: application/json
+
+###
+
+### 📄 Get jobs filtered by vendorId
+GET http://localhost:5000/api/jobs?vendorId=1
+Accept: application/json
+
+###
+
+### 📄 Get jobs filtered by status
+GET http://localhost:5000/api/jobs?status=Booked
+Accept: application/json
+
+###
+
+### 📅 Get jobs created within a date range
+GET http://localhost:5000/api/jobs?from=2025-11-20T00:00:00.000Z&to=2025-11-22T00:00:00.000Z
+Accept: application/json
+
+###
+
+### 🔍 Get single job by id
+GET http://localhost:5000/api/jobs/1
+Accept: application/json
+
+###
+
+### ✏️ Update job status
+PATCH http://localhost:5000/api/jobs/1/status
+Content-Type: application/json
+
+{
+  "status": "Crating"
+}
+
+###
+
+### 🔍 Invalid id test
+GET http://localhost:5000/api/jobs/abc
+Accept: application/json

@@ -8,6 +8,11 @@ import areaRoute from "./routes/areaRoutes";
 import bookingRoute from "./routes/bookingRoutes";
 import exampleRoutes from "./routes/exampleRoute";
 import healthRoute from "./routes/healthRoute";
+import jobRoute from "./routes/jobRoute";
+import plantRoute from "./routes/plantRoute";
+import vendorRoute from "./routes/vendorRoute";
+import workcellRoute from "./routes/workcellRoute";
+
 
 
 dotenv.config();
@@ -39,7 +44,11 @@ app.use(
 app.use("/api/example", exampleRoutes)
 app.use("/api/health", healthRoute)
 app.use("/api/bookings", bookingRoute)
-app.use("/api/areas", areaRoute)        // ✅ NEW
+app.use("/api/areas", areaRoute)
+app.use("/api/jobs", jobRoute)
+app.use("/api/plants", plantRoute)
+app.use("/api/vendors", vendorRoute)
+app.use("/api/workcells", workcellRoute)
 
 /* -------------------------------------------------
    🚫 404 Catcher

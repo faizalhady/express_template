@@ -1,0 +1,41 @@
+### 🆕 Add stage: Booking
+POST http://localhost:5000/api/jobs/1/stages
+Content-Type: application/json
+
+{
+  "stageName": "Booking",
+  "pic": "faiz",
+  "remarks": "Initial booking created"
+}
+
+###
+
+### 🆕 Add stage: Confirmed (with explicit times)
+POST http://localhost:5000/api/jobs/1/stages
+Content-Type: application/json
+
+{
+  "stageName": "Confirmed",
+  "startedAt": "2025-11-20T09:00:00.000Z",
+  "endedAt": "2025-11-20T09:05:00.000Z",
+  "pic": "faiz",
+  "remarks": "Booking confirmed by supervisor"
+}
+
+###
+
+### 📄 Get all stages for job 1
+GET http://localhost:5000/api/jobs/1/stages
+Accept: application/json
+
+###
+
+### 📄 Filter stages by name
+GET http://localhost:5000/api/jobs/1/stages?stageName=Confirmed
+Accept: application/json
+
+###
+
+### 📅 Filter stages by date range
+GET http://localhost:5000/api/jobs/1/stages?from=2025-11-20T00:00:00.000Z&to=2025-11-21T00:00:00.000Z
+Accept: application/json

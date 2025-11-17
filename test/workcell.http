@@ -1,0 +1,27 @@
+### 📄 Get all workcells
+GET http://localhost:5000/api/workcells
+Accept: application/json
+
+###
+
+### 📄 Get active workcells only
+GET http://localhost:5000/api/workcells?isActive=true
+Accept: application/json
+
+###
+
+### 🔍 Search workcell
+GET http://localhost:5000/api/workcells?search=ADVANTEST
+Accept: application/json
+
+###
+
+### 🔍 Get workcell by id
+GET http://localhost:5000/api/workcells/1
+Accept: application/json
+
+###
+
+### ❌ Invalid id
+GET http://localhost:5000/api/workcells/abc
+Accept: application/json
