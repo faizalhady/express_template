@@ -1,4 +1,5 @@
 // src/controllers/stageController.ts
+import { safeLogActivity } from "@/queries/activityLogQueries"
 import {
     findStagesByJob,
     insertJobStage,
@@ -58,13 +59,25 @@ export async function createJobStage(
         }
 
         const stage = await insertJobStage(jobId, stageInput)
-        const dto = toCratingJobStageDto(stage)
 
+        // 🔹 Activity log: StageAdded:<StageName>
+        const userId = pic ?? "system" // later this will be from auth
+        await safeLogActivity({
+            entityType: "Job",
+            entityId: stage.jobId,
+            action: `StageAdded:${stage.stageName}`,
+            oldValue: null,
+            newValue: stage,
+            userId,
+        })
+
+        const dto = toCratingJobStageDto(stage)
         return sendSuccess(res, dto, "Job stage created successfully")
     } catch (err) {
         next(err)
     }
 }
+
 
 /* --------------------------------------------
    GET /api/jobs/:id/stages

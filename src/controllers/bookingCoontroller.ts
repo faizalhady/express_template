@@ -1,3 +1,4 @@
+import { safeLogActivity } from "@/queries/activityLogQueries"
 import type { BookingFilter } from "@/queries/bookingQueries"
 import {
     findBookingById,
@@ -11,6 +12,7 @@ import {
 } from "@/types/bookings"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
+
 
 /* --------------------------------------------
    POST /api/bookings
@@ -39,7 +41,7 @@ export async function createBooking(
             })
         }
 
-        const createdBy = "system" // later from auth
+        const createdBy = "system" // TODO: later from auth
 
         // ✅ Build input without jobId when it's undefined
         const bookingInput: {
@@ -55,13 +57,24 @@ export async function createBooking(
         }
 
         const booking = await insertBooking(bookingInput, createdBy)
-        const dto = toBookingDto(booking)
 
+        // 🔹 Activity log: Booking.Created
+        await safeLogActivity({
+            entityType: "Booking",
+            entityId: booking.bookingId,
+            action: "Created",
+            oldValue: null,
+            newValue: booking,
+            userId: createdBy,
+        })
+
+        const dto = toBookingDto(booking)
         return sendSuccess(res, dto, "Booking created successfully")
     } catch (err) {
         next(err)
     }
 }
+
 
 /* --------------------------------------------
    GET /api/bookings/:id

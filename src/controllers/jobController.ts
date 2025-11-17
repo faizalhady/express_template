@@ -1,4 +1,5 @@
 // src/controllers/jobController.ts
+import { safeLogActivity } from "@/queries/activityLogQueries"
 import {
     findJobById,
     findJobs,
@@ -15,6 +16,7 @@ import {
 } from "@/types/job"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
+
 
 /* --------------------------------------------
    POST /api/jobs
@@ -74,13 +76,24 @@ export async function createJob(
         }
 
         const job = await insertJob(jobInput, createdBy)
-        const dto = toCratingJobDto(job)
 
+        // 🔹 Activity log: Job.Created
+        await safeLogActivity({
+            entityType: "Job",
+            entityId: job.jobId,
+            action: "Created",
+            oldValue: null,
+            newValue: job,
+            userId: createdBy,
+        })
+
+        const dto = toCratingJobDto(job)
         return sendSuccess(res, dto, "Job created successfully")
     } catch (err) {
         next(err)
     }
 }
+
 
 /* --------------------------------------------
    GET /api/jobs/:id
@@ -189,9 +202,9 @@ export async function patchJobStatus(
             })
         }
 
-        const updated = await updateJobStatus(id, status)
-
-        if (!updated) {
+        // 1️⃣ Load existing job to know old status
+        const existing = await findJobById(id)
+        if (!existing) {
             res.status(404)
             return res.json({
                 success: false,
@@ -199,9 +212,32 @@ export async function patchJobStatus(
             })
         }
 
+        // 2️⃣ Update status
+        const updated = await updateJobStatus(id, status)
+
+        if (!updated) {
+            res.status(404)
+            return res.json({
+                success: false,
+                message: "Job not found after update",
+            })
+        }
+
+        // 3️⃣ Activity log: Job.UpdatedStatus
+        const userId = updated.createdBy ?? "system" // TODO: later from auth
+        await safeLogActivity({
+            entityType: "Job",
+            entityId: updated.jobId,
+            action: "UpdatedStatus",
+            oldValue: { status: existing.status },
+            newValue: { status: updated.status },
+            userId,
+        })
+
         const dto = toCratingJobDto(updated)
         return sendSuccess(res, dto, "Job status updated successfully")
     } catch (err) {
         next(err)
     }
 }
+
