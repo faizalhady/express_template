@@ -1,0 +1,59 @@
+### 🆕 Create a new booking
+POST http://localhost:5000/api/bookings
+Content-Type: application/json
+
+{
+  "areaId": 1,
+  "jobId": null,
+  "startDateTime": "2025-11-20T10:00:00.000Z",
+  "endDateTime": "2025-11-20T12:00:00.000Z"
+}
+
+###
+
+### 🆕 Create another booking (different area and time)
+POST http://localhost:5000/api/bookings
+Content-Type: application/json
+
+{
+  "areaId": 2,
+  "jobId": 5,
+  "startDateTime": "2025-11-21T08:00:00.000Z",
+  "endDateTime": "2025-11-21T10:00:00.000Z"
+}
+
+###
+
+### 📄 Get all bookings
+GET http://localhost:5000/api/bookings
+Accept: application/json
+
+###
+
+### 📄 Get bookings filtered by areaId
+GET http://localhost:5000/api/bookings?areaId=1
+Accept: application/json
+
+###
+
+### 📄 Get bookings filtered by status
+GET http://localhost:5000/api/bookings?status=Pending
+Accept: application/json
+
+###
+
+### 📅 Get bookings within a date range
+GET http://localhost:5000/api/bookings?from=2025-11-20T00:00:00.000Z&to=2025-11-22T00:00:00.000Z
+Accept: application/json
+
+###
+
+### 🔍 Get a single booking by id
+GET http://localhost:5000/api/bookings/1
+Accept: application/json
+
+###
+
+### 🔍 Try invalid booking id
+GET http://localhost:5000/api/bookings/abc
+Accept: application/json

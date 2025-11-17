@@ -1,11 +1,14 @@
-import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import morgan from "morgan";
+import { connectDB } from "./config/db";
+import { errorHandler } from "./middlewares/errorMiddleware";
+import areaRoute from "./routes/areaRoutes";
+import bookingRoute from "./routes/bookingRoutes";
 import exampleRoutes from "./routes/exampleRoute";
 import healthRoute from "./routes/healthRoute";
-import { connectDB } from "./config/db";
-import morgan from "morgan";
-import { errorHandler } from "./middlewares/errorMiddleware";
+
 
 dotenv.config();
 connectDB();
@@ -30,8 +33,13 @@ app.use(
 /* -------------------------------------------------
    ✅ API Routes
 ---------------------------------------------------*/
-app.use("/api/example", exampleRoutes);
-app.use("/api/health", healthRoute);
+/* -------------------------------------------------
+   ✅ API Routes
+---------------------------------------------------*/
+app.use("/api/example", exampleRoutes)
+app.use("/api/health", healthRoute)
+app.use("/api/bookings", bookingRoute)
+app.use("/api/areas", areaRoute)        // ✅ NEW
 
 /* -------------------------------------------------
    🚫 404 Catcher

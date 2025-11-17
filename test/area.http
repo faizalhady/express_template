@@ -1,0 +1,27 @@
+### 📄 Get all crating areas
+GET http://localhost:5000/api/areas
+Accept: application/json
+
+###
+
+### 📄 Get areas filtered by plantId
+GET http://localhost:5000/api/areas?plantId=1
+Accept: application/json
+
+###
+
+### 📄 Get areas filtered by status
+GET http://localhost:5000/api/areas?status=Occupied
+Accept: application/json
+
+###
+
+### 🔍 Get a single area by id
+GET http://localhost:5000/api/areas/1
+Accept: application/json
+
+###
+
+### 🔍 Try invalid area id
+GET http://localhost:5000/api/areas/abc
+Accept: application/json
