@@ -1,5 +1,5 @@
 // src/controllers/areaController.ts
-import { findAreaOverview } from "@/queries/areaOberviewQueries."
+import { findAreaOverview } from "@/queries/areaOverviewQueries."
 import { findAreaById, findAreas, type AreaFilter } from "@/queries/areaQueries"
 import {
     toCratingAreaDto,
