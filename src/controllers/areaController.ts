@@ -1,4 +1,5 @@
 // src/controllers/areaController.ts
+import { findAreaOverview } from "@/queries/areaOberviewQueries."
 import { findAreaById, findAreas, type AreaFilter } from "@/queries/areaQueries"
 import {
     toCratingAreaDto,
@@ -70,6 +71,32 @@ export async function listAreas(
         const dtos = areas.map(toCratingAreaDto)
 
         return sendSuccess(res, dtos, "Areas fetched successfully")
+    } catch (err) {
+        next(err)
+    }
+}
+
+
+/* --------------------------------------------
+   GET /api/areas/overview
+   Rich dashboard view per area
+---------------------------------------------*/
+export async function listAreaOverview(
+    req: Request<unknown, unknown, unknown, { plantId?: string }>,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const { plantId } = req.query
+
+        const filter =
+            plantId && !Number.isNaN(Number.parseInt(plantId, 10))
+                ? { plantId: Number.parseInt(plantId, 10) }
+                : {}
+
+        const data = await findAreaOverview(filter)
+
+        return sendSuccess(res, data, "Area overview fetched successfully")
     } catch (err) {
         next(err)
     }

@@ -25,3 +25,11 @@ Accept: application/json
 ### 🔍 Try invalid area id
 GET http://localhost:5000/api/areas/abc
 Accept: application/json
+
+###
+
+### 📄 Get area overview
+GET  http://localhost:5000/api/areas/overview
+Accept: application/json
+
+###
