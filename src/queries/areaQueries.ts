@@ -1,13 +1,15 @@
 // src/queries/areaQueries.ts
 import { connectDB, sql } from "@/config/db"
 import type {
-    CratingArea,
-    CratingAreaStatus
+    Area,
+    AreaStatus,
+    AreaType,
 } from "@/types/cpsCore"
 
 export interface AreaFilter {
     plantId?: number
-    status?: CratingAreaStatus
+    status?: AreaStatus
+    areaType?: AreaType
 }
 
 /* --------------------------------------------
@@ -15,20 +17,21 @@ export interface AreaFilter {
 ---------------------------------------------*/
 export async function findAreaById(
     areaId: number
-): Promise<CratingArea | null> {
+): Promise<Area | null> {
     const pool = await connectDB()
 
     const result = await pool
         .request()
         .input("Area_Id", sql.Int, areaId)
-        .query<CratingArea>(`
+        .query<Area>(`
       SELECT
-        Area_Id   AS areaId,
-        Plant_Id  AS plantId,
-        AreaName  AS areaName,
-        Status    AS status,
-        UpdatedAt AS updatedAt
-      FROM ref.CratingArea
+        Area_Id    AS areaId,
+        Plant_Id   AS plantId,
+        AreaName   AS areaName,
+        Status     AS status,
+        AreaType   AS areaType,
+        UpdatedAt  AS updatedAt
+      FROM ref.Area
       WHERE Area_Id = @Area_Id;
     `)
 
@@ -42,7 +45,7 @@ export async function findAreaById(
 ---------------------------------------------*/
 export async function findAreas(
     filter: AreaFilter = {}
-): Promise<CratingArea[]> {
+): Promise<Area[]> {
     const pool = await connectDB()
     const request = pool.request()
 
@@ -58,14 +61,20 @@ export async function findAreas(
         request.input("Status", sql.VarChar, filter.status)
     }
 
-    const result = await request.query<CratingArea>(`
+    if (filter.areaType) {
+        where += " AND AreaType = @AreaType"
+        request.input("AreaType", sql.VarChar, filter.areaType)
+    }
+
+    const result = await request.query<Area>(`
     SELECT
-      Area_Id   AS areaId,
-      Plant_Id  AS plantId,
-      AreaName  AS areaName,
-      Status    AS status,
-      UpdatedAt AS updatedAt
-    FROM ref.CratingArea
+      Area_Id    AS areaId,
+      Plant_Id   AS plantId,
+      AreaName   AS areaName,
+      Status     AS status,
+      AreaType   AS areaType,
+      UpdatedAt  AS updatedAt
+    FROM ref.Area
     WHERE ${where}
     ORDER BY AreaName ASC;
   `)

@@ -1,20 +1,22 @@
 // src/types/areaOverview.ts
 import type {
+    AreaStatus,
+    AreaType,
     BookingStatus,
-    CratingAreaStatus,
     CratingJobStatus,
     ISODateTimeString,
 } from "@/types/cpsCore"
 
 /**
- * One item = one crating area tile on your dashboard
+ * One item = one area tile on your dashboard
  */
 export interface AreaOverviewDto {
     // ----- Area basics -----
     areaId: number
     plantId: number
     areaName: string
-    areaStatus: CratingAreaStatus
+    areaStatus: AreaStatus
+    areaType: AreaType           // 👈 NEW
     updatedAt: ISODateTimeString
 
     // ----- Current job in that area (if any) -----

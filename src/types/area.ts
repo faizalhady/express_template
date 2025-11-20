@@ -1,7 +1,8 @@
 // src/types/area.ts
 import type {
-    CratingArea,
-    CratingAreaStatus,
+    Area,
+    AreaStatus,
+    AreaType,
     ISODateTimeString,
 } from "@/types/cpsCore"
 
@@ -10,29 +11,31 @@ import type {
 ---------------------------------------------*/
 export interface ListAreasQuery {
     plantId?: string
-    status?: CratingAreaStatus
+    status?: AreaStatus
 }
 
 /* --------------------------------------------
    DTO returned to frontend
 ---------------------------------------------*/
-export interface CratingAreaDto {
+export interface AreaDto {
     areaId: number
     plantId: number
     areaName: string
-    status: CratingAreaStatus
+    status: AreaStatus
+    areaType: AreaType
     updatedAt: ISODateTimeString
 }
 
 /* --------------------------------------------
    Mapper from DB entity -> DTO
 ---------------------------------------------*/
-export function toCratingAreaDto(area: CratingArea): CratingAreaDto {
+export function toAreaDto(area: Area): AreaDto {
     return {
         areaId: area.areaId,
         plantId: area.plantId,
         areaName: area.areaName,
         status: area.status,
+        areaType: area.areaType,
         updatedAt: area.updatedAt,
     }
 }

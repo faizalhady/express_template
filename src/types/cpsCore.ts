@@ -7,7 +7,7 @@ export type ISODateTimeString = string;
    ENUMS - mirror your SQL CHECK constraints
    ============================================ */
 
-export type CratingAreaStatus =
+export type AreaStatus =
     | "Idle"
     | "Occupied"
     | "Calling"
@@ -54,6 +54,8 @@ export type ActivityEntityType =
 
 export type RoleName = "Admin" | "SuperAdmin" | "User" | "Vendor" | "Viewer";
 
+export type AreaType = "Crating" | "Holding";
+
 /* ============================================
    REF SCHEMA TYPES
    ============================================ */
@@ -65,12 +67,13 @@ export interface Plant {
     createdAt: ISODateTimeString;    // CreatedAt
 }
 
-export interface CratingArea {
-    areaId: number;                  // Area_Id
-    plantId: number;                 // Plant_Id FK -> Plant
-    areaName: string;                // AreaName
-    status: CratingAreaStatus;       // Status
-    updatedAt: ISODateTimeString;    // UpdatedAt
+export interface Area {
+    areaId: number
+    plantId: number
+    areaName: string
+    status: AreaStatus
+    areaType: AreaType
+    updatedAt: ISODateTimeString
 }
 
 export interface Vendor {
