@@ -2,7 +2,7 @@
 import { findAreaOverview } from "@/queries/areaOverviewQueries."
 import { findAreaById, findAreas, type AreaFilter } from "@/queries/areaQueries"
 import {
-    toCratingAreaDto,
+    toAreaDto,
     type ListAreasQuery,
 } from "@/types/area"
 import { sendSuccess } from "@/utils/responseHandler"
@@ -35,12 +35,13 @@ export async function getAreaById(
             })
         }
 
-        const dto = toCratingAreaDto(area)
+        const dto = toAreaDto(area)
         return sendSuccess(res, dto, "Area fetched successfully")
     } catch (err) {
         next(err)
     }
 }
+
 
 /* --------------------------------------------
    GET /api/areas
@@ -68,7 +69,7 @@ export async function listAreas(
         }
 
         const areas = await findAreas(filter)
-        const dtos = areas.map(toCratingAreaDto)
+        const dtos = areas.map(toAreaDto)
 
         return sendSuccess(res, dtos, "Areas fetched successfully")
     } catch (err) {
@@ -79,7 +80,6 @@ export async function listAreas(
 
 /* --------------------------------------------
    GET /api/areas/overview
-   Rich dashboard view per area
 ---------------------------------------------*/
 export async function listAreaOverview(
     req: Request<unknown, unknown, unknown, { plantId?: string }>,

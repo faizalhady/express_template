@@ -33,7 +33,11 @@ export interface BookingDto {
     status: BookingStatus
     createdBy: string | null
     createdAt: ISODateTimeString
+
+    replacedByBookingId: number | null
+    createdByUserId: number | null
 }
+
 
 /* --------------------------------------------
    Mapper from DB entity -> DTO
@@ -48,5 +52,7 @@ export function toBookingDto(booking: Booking): BookingDto {
         status: booking.status,
         createdBy: booking.createdBy,
         createdAt: booking.createdAt,
+        replacedByBookingId: booking.replacedByBookingId,
+        createdByUserId: booking.createdByUserId,
     }
 }

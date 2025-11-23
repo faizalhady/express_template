@@ -8,6 +8,7 @@ import areaRoute from "./routes/areaRoutes";
 import bookingRoute from "./routes/bookingRoutes";
 import exampleRoutes from "./routes/exampleRoute";
 import healthRoute from "./routes/healthRoute";
+import jobBookingRoute from "./routes/jobBookingRoute";
 import jobRoute from "./routes/jobRoute";
 import plantRoute from "./routes/plantRoute";
 import vendorRoute from "./routes/vendorRoute";
@@ -26,13 +27,13 @@ app.use(morgan(":method :url :status :response-time ms - :res[content-length]"))
    ✅ CORS Configuration (MUST come before routes)
 ---------------------------------------------------*/
 app.use(
-  cors({
-    origin: [
-      "http://localhost:5173", // Vite dev
-      "http://localhost:3000", // CRA fallback
-    ],
-    credentials: true,
-  })
+   cors({
+      origin: [
+         "http://localhost:5173", // Vite dev
+         "http://localhost:3000", // CRA fallback
+      ],
+      credentials: true,
+   })
 );
 
 /* -------------------------------------------------
@@ -49,14 +50,15 @@ app.use("/api/jobs", jobRoute)
 app.use("/api/plants", plantRoute)
 app.use("/api/vendors", vendorRoute)
 app.use("/api/workcells", workcellRoute)
+app.use("/api/jobs-with-booking", jobBookingRoute)
 
 /* -------------------------------------------------
    🚫 404 Catcher
 ---------------------------------------------------*/
 app.use((req, res, next) => {
-  const error = new Error(`Not Found - ${req.originalUrl}`);
-  res.status(404);
-  next(error);
+   const error = new Error(`Not Found - ${req.originalUrl}`);
+   res.status(404);
+   next(error);
 });
 
 /* -------------------------------------------------

@@ -19,7 +19,7 @@ export type CratingJobStatus =
     | "Confirmed"
     | "Calling"
     | "Crating"
-    | "Crated"
+    | "CratingComplete"
     | "ReadyForCollection"
     | "Collected"
     | "Cancelled"
@@ -33,8 +33,8 @@ export type BookingStatus =
     | "Completed";
 
 export type CratingJobStageName =
-    | "Booking"
-    | "ConfirmationPending"
+    | "Booked"
+    | "WaitingConfirmation"
     | "Confirmed"
     | "Calling"
     | "Crating"
@@ -152,9 +152,15 @@ export interface Booking {
 
     status: BookingStatus;           // Status
 
-    createdBy: string | null;        // CreatedBy
+    createdBy: string | null;        // CreatedBy (username or NTID)
     createdAt: ISODateTimeString;    // CreatedAt
+
+    // New: extra DB columns
+    replacedByBookingId: number | null; // ReplacedBy_Booking_Id
+    createdByUserId: number | null;     // CreatedBy_User_Id (FK to auth.User)
 }
+
+
 
 export interface CratingJobStage {
     stageId: number;                 // Stage_Id

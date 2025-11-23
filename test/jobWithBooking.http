@@ -1,0 +1,42 @@
+### 🆕 Create Job + Booking (basic happy path)
+POST http://localhost:5000/api/jobs-with-booking
+Content-Type: application/json
+Accept: application/json
+
+{
+  "serialNumber": "SN-CRATE-0001",
+  "model": "MODEL-ABC",
+  "workcellId": 1,
+  "vendorId": 1,
+  "areaId": 1,
+  "startDateTime": "2025-11-25T08:00:00.000Z",
+  "endDateTime": "2025-11-25T10:00:00.000Z"
+}
+
+###
+
+### 🆕 Create Job + Booking (no vendorId, still valid)
+POST http://localhost:5000/api/jobs-with-booking
+Content-Type: application/json
+Accept: application/json
+
+{
+  "serialNumber": "SN-CRATE-0002",
+  "model": "MODEL-XYZ",
+  "workcellId": 1,
+  "areaId": 2,
+  "startDateTime": "2025-11-26T13:00:00.000Z",
+  "endDateTime": "2025-11-26T15:00:00.000Z"
+}
+
+###
+
+### ❌ Missing required fields (should return 400)
+POST http://localhost:5000/api/jobs-with-booking
+Content-Type: application/json
+Accept: application/json
+
+{
+  "serialNumber": "SN-INVALID",
+  "workcellId": 1
+}

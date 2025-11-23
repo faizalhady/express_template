@@ -25,3 +25,25 @@ Accept: application/json
 ### ❌ Invalid id
 GET http://localhost:5000/api/vendors/abc
 Accept: application/json
+
+
+### 🚚 Vendor scan - start crating
+POST http://localhost:5000/api/vendors/scan/start
+Content-Type: application/json
+
+{
+  "jobId": 1,
+  "areaId": 1,
+  "pic": "vendor_user_1"
+}
+
+###
+
+### ✅ Vendor scan - finish crating
+POST http://localhost:5000/api/vendors/scan/finish
+Content-Type: application/json
+
+{
+  "jobId": 1,
+  "pic": "vendor_user_1"
+}
