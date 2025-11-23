@@ -157,3 +157,41 @@ export async function findBookings(
 
   return result.recordset
 }
+
+
+
+/* --------------------------------------------
+   UPDATE booking status
+---------------------------------------------*/
+export async function updateBookingStatus(
+  bookingId: number,
+  status: BookingStatus
+): Promise<Booking | null> {
+  const pool = await connectDB()
+  const request = pool.request()
+
+  request.input("Booking_Id", sql.Int, bookingId)
+  request.input("Status", sql.VarChar, status)
+
+  const result = await request.query<Booking>(`
+    UPDATE core.Booking
+    SET
+      Status = @Status
+    OUTPUT
+      INSERTED.Booking_Id            AS bookingId,
+      INSERTED.Job_Id                AS jobId,
+      INSERTED.Area_Id               AS areaId,
+      INSERTED.StartDateTime         AS startDateTime,
+      INSERTED.EndDateTime           AS endDateTime,
+      INSERTED.Status                AS status,
+      INSERTED.CreatedBy             AS createdBy,
+      INSERTED.CreatedAt             AS createdAt,
+      INSERTED.ReplacedBy_Booking_Id AS replacedByBookingId,
+      INSERTED.CreatedBy_User_Id     AS createdByUserId
+    WHERE Booking_Id = @Booking_Id;
+  `)
+
+  const row = result.recordset[0]
+  if (!row) return null
+  return row
+}

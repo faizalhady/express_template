@@ -5,6 +5,8 @@ import {
     findBookings,
     insertBooking,
 } from "@/queries/bookingQueries"
+import { changeBookingStatus } from "@/services/bookingStatusService"
+import type { UpdateBookingStatusBody } from "@/types/bookings"
 import {
     type CreateBookingBody,
     type ListBookingsQuery,
@@ -143,6 +145,59 @@ export async function listBookings(
 
         return sendSuccess(res, dtos, "Bookings fetched successfully")
     } catch (err) {
+        next(err)
+    }
+}
+
+
+/* --------------------------------------------
+   PATCH /api/bookings/:id/status
+   Central booking status update
+---------------------------------------------*/
+export async function patchBookingStatus(
+    req: Request<{ id: string }, unknown, UpdateBookingStatusBody>,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const id = Number.parseInt(req.params.id, 10)
+        if (Number.isNaN(id)) {
+            res.status(400)
+            return res.json({
+                success: false,
+                message: "Invalid booking id",
+            })
+        }
+
+        const { status } = req.body
+        if (!status) {
+            res.status(400)
+            return res.json({
+                success: false,
+                message: "status is required",
+            })
+        }
+
+        const userId = "system" // later from auth
+
+        const booking = await changeBookingStatus(id, status, {
+            userId,
+            source: "ManualStatusUpdate",
+        })
+
+        const dto = toBookingDto(booking)
+        return sendSuccess(
+            res,
+            dto,
+            "Booking status updated successfully"
+        )
+    } catch (err) {
+        if (err instanceof Error) {
+            return res.status(400).json({
+                success: false,
+                message: err.message,
+            })
+        }
         next(err)
     }
 }

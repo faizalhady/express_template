@@ -38,6 +38,11 @@ export interface BookingDto {
     createdByUserId: number | null
 }
 
+// Booking status
+
+export interface UpdateBookingStatusBody {
+    status: BookingStatus
+}
 
 /* --------------------------------------------
    Mapper from DB entity -> DTO

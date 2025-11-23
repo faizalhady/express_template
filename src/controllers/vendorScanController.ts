@@ -1,8 +1,5 @@
 // src/controllers/vendorScanController.ts
-import { safeLogActivity } from "@/queries/activityLogQueries"
-import { completeCratingJob, findJobById, startCratingJob } from "@/queries/jobQueries"
-import { insertJobStage } from "@/queries/stageQueries"
-import type { CratingJobStageName } from "@/types/cpsCore"
+import { changeJobStatus } from "@/services/jobStatusService"
 import { toCratingJobDto } from "@/types/job"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
@@ -41,55 +38,28 @@ export async function vendorScanStart(
             })
         }
 
-        const existing = await findJobById(jobId)
-        if (!existing) {
-            res.status(404)
-            return res.json({
-                success: false,
-                message: "Job not found",
-            })
-        }
+        const userId = pic ?? "vendor-scan"
 
-        // Basic guard: avoid starting already finished/cancelled jobs
-        if (["Cancelled", "Collected", "Expired", "CratingComplete"].includes(existing.status)) {
-            res.status(400)
-            return res.json({
-                success: false,
-                message: `Cannot start crating for job in status '${existing.status}'`,
-            })
-        }
-
-        // Update job -> Crating, set StartTime
-        const updated = await startCratingJob(jobId, areaId ?? existing.areaId)
-        if (!updated) {
-            res.status(500)
-            return res.json({
-                success: false,
-                message: "Failed to update job status to Crating",
-            })
-        }
-
-        // Add stage: Crating
-        const stageName: CratingJobStageName = "Crating"
-        await insertJobStage(jobId, {
-            stageName,
-            pic: pic ?? "vendor-scan",
+        const { job, stageId } = await changeJobStatus(jobId, "Crating", {
+            userId,
+            areaId: areaId ?? null,
+            source: "VendorScanStart",
             remarks: "Crating started by vendor scan",
         })
 
-        // Activity log
-        await safeLogActivity({
-            entityType: "Job",
-            entityId: updated.jobId,
-            action: "VendorScanStart",
-            oldValue: { status: existing.status },
-            newValue: { status: updated.status, startTime: updated.startTime },
-            userId: pic ?? updated.createdBy ?? "system",
-        })
-
-        const dto = toCratingJobDto(updated)
-        return sendSuccess(res, dto, "Crating started successfully")
+        const dto = toCratingJobDto(job)
+        return sendSuccess(
+            res,
+            { job: dto, stageId },
+            "Crating started successfully"
+        )
     } catch (err) {
+        if (err instanceof Error) {
+            return res.status(400).json({
+                success: false,
+                message: err.message,
+            })
+        }
         next(err)
     }
 }
@@ -114,54 +84,27 @@ export async function vendorScanFinish(
             })
         }
 
-        const existing = await findJobById(jobId)
-        if (!existing) {
-            res.status(404)
-            return res.json({
-                success: false,
-                message: "Job not found",
-            })
-        }
+        const userId = pic ?? "vendor-scan"
 
-        // Guard: only allow finish if currently Crating (or maybe Calling/Confirmed)
-        if (!["Crating", "Calling", "Confirmed"].includes(existing.status)) {
-            res.status(400)
-            return res.json({
-                success: false,
-                message: `Cannot finish crating for job in status '${existing.status}'`,
-            })
-        }
-
-        const updated = await completeCratingJob(jobId)
-        if (!updated) {
-            res.status(500)
-            return res.json({
-                success: false,
-                message: "Failed to update job status to CratingComplete",
-            })
-        }
-
-        // Add stage: CratingComplete
-        const stageName: CratingJobStageName = "CratingComplete"
-        await insertJobStage(jobId, {
-            stageName,
-            pic: pic ?? "vendor-scan",
+        const { job, stageId } = await changeJobStatus(jobId, "CratingComplete", {
+            userId,
+            source: "VendorScanFinish",
             remarks: "Crating finished by vendor scan",
         })
 
-        // Activity log
-        await safeLogActivity({
-            entityType: "Job",
-            entityId: updated.jobId,
-            action: "VendorScanFinish",
-            oldValue: { status: existing.status },
-            newValue: { status: updated.status, endTime: updated.endTime },
-            userId: pic ?? updated.createdBy ?? "system",
-        })
-
-        const dto = toCratingJobDto(updated)
-        return sendSuccess(res, dto, "Crating finished successfully")
+        const dto = toCratingJobDto(job)
+        return sendSuccess(
+            res,
+            { job: dto, stageId },
+            "Crating finished successfully"
+        )
     } catch (err) {
+        if (err instanceof Error) {
+            return res.status(400).json({
+                success: false,
+                message: err.message,
+            })
+        }
         next(err)
     }
 }

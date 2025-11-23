@@ -4,9 +4,9 @@ import {
     findJobById,
     findJobs,
     insertJob,
-    updateJobStatus,
-    type JobFilter,
+    type JobFilter
 } from "@/queries/jobQueries"
+import { changeJobStatus } from "@/services/jobStatusService"
 import type { CratingJobStatus } from "@/types/cpsCore"
 import {
     toCratingJobDto,
@@ -16,7 +16,6 @@ import {
 } from "@/types/job"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
-
 
 /* --------------------------------------------
    POST /api/jobs
@@ -53,10 +52,8 @@ export async function createJob(
             })
         }
 
-        // Later: take from auth/session
         const createdBy = "system"
 
-        // Build input respecting exactOptionalPropertyTypes
         const jobInput: {
             serialNumber: string
             model?: string | null
@@ -77,7 +74,6 @@ export async function createJob(
 
         const job = await insertJob(jobInput, createdBy)
 
-        // 🔹 Activity log: Job.Created
         await safeLogActivity({
             entityType: "Job",
             entityId: job.jobId,
@@ -93,7 +89,6 @@ export async function createJob(
         next(err)
     }
 }
-
 
 /* --------------------------------------------
    GET /api/jobs/:id
@@ -131,7 +126,6 @@ export async function getJobById(
 
 /* --------------------------------------------
    GET /api/jobs
-   Optional filters: areaId, workcellId, vendorId, status, from, to
 ---------------------------------------------*/
 export async function listJobs(
     req: Request<unknown, unknown, unknown, ListJobsQuery>,
@@ -193,7 +187,6 @@ export async function patchJobStatus(
         }
 
         const { status } = req.body
-
         if (!status) {
             res.status(400)
             return res.json({
@@ -202,42 +195,30 @@ export async function patchJobStatus(
             })
         }
 
-        // 1️⃣ Load existing job to know old status
-        const existing = await findJobById(id)
-        if (!existing) {
-            res.status(404)
-            return res.json({
-                success: false,
-                message: "Job not found",
-            })
-        }
+        const userId = "system" // later from auth
 
-        // 2️⃣ Update status
-        const updated = await updateJobStatus(id, status)
-
-        if (!updated) {
-            res.status(404)
-            return res.json({
-                success: false,
-                message: "Job not found after update",
-            })
-        }
-
-        // 3️⃣ Activity log: Job.UpdatedStatus
-        const userId = updated.createdBy ?? "system" // TODO: later from auth
-        await safeLogActivity({
-            entityType: "Job",
-            entityId: updated.jobId,
-            action: "UpdatedStatus",
-            oldValue: { status: existing.status },
-            newValue: { status: updated.status },
+        const { job, stageId } = await changeJobStatus(id, status, {
             userId,
+            source: "ManualStatusUpdate",
         })
 
-        const dto = toCratingJobDto(updated)
-        return sendSuccess(res, dto, "Job status updated successfully")
+        const dto = toCratingJobDto(job)
+        return sendSuccess(
+            res,
+            {
+                job: dto,
+                stageId,
+            },
+            "Job status updated successfully"
+        )
     } catch (err) {
+        if (err instanceof Error) {
+            // includes invalid transition, job not found, etc.
+            return res.status(400).json({
+                success: false,
+                message: err.message,
+            })
+        }
         next(err)
     }
 }
-

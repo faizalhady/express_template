@@ -2,7 +2,8 @@ import {
     createBooking,
     getBookingById,
     listBookings,
-} from "@/controllers/bookingCoontroller"
+    patchBookingStatus,
+} from "@/controllers/bookingController"
 import { Router } from "express"
 
 const router = Router()
@@ -15,5 +16,6 @@ router.get("/:id", getBookingById)
 
 // GET /api/bookings
 router.get("/", listBookings)
+router.patch("/:id/status", patchBookingStatus)
 
 export default router
