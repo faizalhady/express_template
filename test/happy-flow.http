@@ -1,0 +1,148 @@
+### ENV
+@baseUrl = http://localhost:5000/api
+# After running the first request, update these with the returned IDs
+@jobId = 1
+@bookingId = 1
+
+################################################
+# 1) Create Job + Booking (Booked + Pending)
+#    - POST /api/jobs-with-booking
+#    - Creates:
+#        core.CratingJob (Status = Booked)
+#        core.Booking (Status = Pending)
+#        core.CratingJobStage (StageName = Booked)
+################################################
+POST {{baseUrl}}/jobs-with-booking
+Content-Type: application/json
+
+{
+  "serialNumber": "SN-TEST-001",
+  "model": "MODEL-XYZ",
+  "workcellId": 1,
+  "vendorId": 1,
+  "areaId": 1,
+  "startDateTime": "2025-11-24T10:00:00Z",
+  "endDateTime": "2025-11-24T11:00:00Z"
+}
+
+###
+# After this request:
+# - Copy response.job.jobId   into @jobId
+# - Copy response.booking.bookingId into @bookingId
+###
+
+################################################
+# 2) Get Booking by Id (check Pending)
+################################################
+GET {{baseUrl}}/bookings/{{bookingId}}
+
+################################################
+# 3) Confirm Booking (Pending -> Confirmed)
+#    - PATCH /api/bookings/:id/status
+################################################
+PATCH {{baseUrl}}/bookings/{{bookingId}}/status
+Content-Type: application/json
+
+{
+  "status": "Confirmed"
+}
+
+################################################
+# 4) Get Booking again (should be Confirmed)
+################################################
+GET {{baseUrl}}/bookings/{{bookingId}}
+
+################################################
+# 5) Vendor Scan Start (Crating start)
+#    - POST /api/vendors/scan/start
+#    - Job: Status Booked/Confirmed/... -> Crating
+#    - Creates CratingJobStage "Crating"
+################################################
+POST {{baseUrl}}/vendors/scan/start
+Content-Type: application/json
+
+{
+  "jobId": {{jobId}},
+  "areaId": 1,
+  "pic": "vendor-user-001"
+}
+
+################################################
+# 6) Get Job by Id (should be Crating)
+################################################
+GET {{baseUrl}}/jobs/{{jobId}}
+
+################################################
+# 7) Vendor Scan Finish (CratingComplete)
+#    - POST /api/vendors/scan/finish
+#    - Job: Status Crating -> CratingComplete
+#    - Creates CratingJobStage "CratingComplete"
+################################################
+POST {{baseUrl}}/vendors/scan/finish
+Content-Type: application/json
+
+{
+  "jobId": {{jobId}},
+  "pic": "vendor-user-001"
+}
+
+################################################
+# 8) Get Job by Id (should be CratingComplete)
+################################################
+GET {{baseUrl}}/jobs/{{jobId}}
+
+################################################
+# 9) Manually mark Booking Completed
+#    - Booking: Confirmed -> Completed
+#    - PATCH /api/bookings/:id/status
+################################################
+PATCH {{baseUrl}}/bookings/{{bookingId}}/status
+Content-Type: application/json
+
+{
+  "status": "Completed"
+}
+
+################################################
+# 10) Get Booking again (should be Completed)
+################################################
+GET {{baseUrl}}/bookings/{{bookingId}}
+
+################################################
+# 11) Set Job to ReadyForCollection
+#     - Job: CratingComplete -> ReadyForCollection
+################################################
+PATCH {{baseUrl}}/jobs/{{jobId}}/status
+Content-Type: application/json
+
+{
+  "status": "ReadyForCollection"
+}
+
+################################################
+# 12) Get Job (check ReadyForCollection)
+################################################
+GET {{baseUrl}}/jobs/{{jobId}}
+
+################################################
+# 13) Set Job to Collected
+#     - Job: ReadyForCollection -> Collected
+################################################
+PATCH {{baseUrl}}/jobs/{{jobId}}/status
+Content-Type: application/json
+
+{
+  "status": "Collected"
+}
+
+################################################
+# 14) Final Job check (Collected - terminal)
+################################################
+GET {{baseUrl}}/jobs/{{jobId}}
+
+################################################
+# 15) Optional: Area overview to see
+#     - Current job
+#     - Next booking
+################################################
+GET {{baseUrl}}/areas/overview?plantId=1
