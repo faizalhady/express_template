@@ -1,0 +1,156 @@
+###############################################
+# ENV
+###############################################
+@baseUrl = http://localhost:5000/api
+
+# These will be updated after creation
+@bookingA = 1
+@bookingB = 2
+
+###############################################################
+# 0) CLEAN TABLES (optional)
+# Use only on local DB!
+###############################################################
+### TRUNCATE TABLES
+POST {{baseUrl}}/dev-utils/clear-core  # Only if you made a dev endpoint
+###
+
+
+###############################################################
+# 1) CREATE TWO BOOKINGS
+# These will be used to test swapping
+###############################################################
+
+### CREATE BOOKING A  (Requester)
+POST {{baseUrl}}/jobs-with-booking
+Content-Type: application/json
+
+{
+  "serialNumber": "SN-A-001",
+  "model": "MODEL-A",
+  "workcellId": 1,
+  "vendorId": 1,
+  "areaId": 1,
+  "startDateTime": "2025-12-01T10:00:00Z",
+  "endDateTime": "2025-12-01T11:00:00Z"
+}
+
+### After running, set:
+# @bookingA = <response.booking.bookingId>
+
+### CREATE BOOKING B (Receiver — target slot, 4-hour rule ok)
+POST {{baseUrl}}/jobs-with-booking
+Content-Type: application/json
+
+{
+  "serialNumber": "SN-B-001",
+  "model": "MODEL-B",
+  "workcellId": 2,
+  "vendorId": 2,
+  "areaId": 2,
+  "startDateTime": "2025-12-01T17:00:00Z",
+  "endDateTime": "2025-12-01T18:00:00Z"
+}
+
+### After running, set:
+# @bookingB = <response.booking.bookingId>
+
+
+###############################################################
+# 2) GET BOOKINGS
+###############################################################
+
+### GET BOOKING A
+GET {{baseUrl}}/bookings/{{bookingA}}
+
+### GET BOOKING B
+GET {{baseUrl}}/bookings/{{bookingB}}
+
+
+
+###############################################################
+# SCENARIO 1:
+# "SwapSlots" – both users simply exchange booking slots
+###############################################################
+
+### SWAP SLOTS
+POST {{baseUrl}}/bookings/swaps/approve
+Content-Type: application/json
+
+{
+  "fromBookingId": {{bookingA}},
+  "toBookingId": {{bookingB}},
+  "decisionType": "SwapSlots",
+  "reason": "Requester and receiver agreed to swap slots"
+}
+
+### CHECK RESULTS
+GET {{baseUrl}}/bookings/{{bookingA}}
+GET {{baseUrl}}/bookings/{{bookingB}}
+
+
+
+###############################################################
+# (RESET IF NEEDED)
+# Recreate Bookings A and B again IF you want each scenario isolated.
+###############################################################
+
+
+
+###############################################################
+# SCENARIO 2:
+# "GiveSlot_CancelReceiver"
+# Receiver gives their slot to requester AND their own booking becomes Cancelled
+###############################################################
+
+### APPROVE: CANCEL RECEIVER
+POST {{baseUrl}}/bookings/swaps/approve
+Content-Type: application/json
+
+{
+  "fromBookingId": {{bookingA}},
+  "toBookingId": {{bookingB}},
+  "decisionType": "GiveSlot_CancelReceiver",
+  "reason": "Receiver allows requester to take his slot and cancels"
+}
+
+### CHECK RESULTS
+GET {{baseUrl}}/bookings/{{bookingA}}
+GET {{baseUrl}}/bookings/{{bookingB}}
+
+
+
+###############################################################
+# SCENARIO 3:
+# "GiveSlot_RescheduleReceiver"
+# Receiver gives their slot to requester AND chooses a brand new slot
+###############################################################
+
+### APPROVE: RECEIVER RESCHEDULES THEMSELVES
+POST {{baseUrl}}/bookings/swaps/approve
+Content-Type: application/json
+
+{
+  "fromBookingId": {{bookingA}},
+  "toBookingId": {{bookingB}},
+  "decisionType": "GiveSlot_RescheduleReceiver",
+  "receiverNewAreaId": 3,
+  "receiverNewStart": "2025-12-02T14:00:00Z",
+  "receiverNewEnd": "2025-12-02T15:00:00Z",
+  "reason": "Receiver wants a later slot"
+}
+
+### CHECK RESULTS
+GET {{baseUrl}}/bookings/{{bookingA}}
+GET {{baseUrl}}/bookings/{{bookingB}}
+
+
+
+###############################################################
+# VIEW SWAP LOGS (OPTIONAL)
+###############################################################
+GET {{baseUrl}}/bookings/swaps/logs?fromBookingId={{bookingA}}&toBookingId={{bookingB}}
+
+###############################################################
+# END
+###############################################################

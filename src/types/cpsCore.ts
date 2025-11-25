@@ -52,6 +52,12 @@ export type ActivityEntityType =
     | "Workcell"
     | "Plant";
 
+export type BookingSwapType =
+    | "SwapSlots"                 // both parties swap slots
+    | "GiveSlot_CancelReceiver"   // receiver gives slot, then cancels own booking
+    | "GiveSlot_RescheduleReceiver"; // receiver gives slot, then moves to new slot
+
+
 export type RoleName = "Admin" | "SuperAdmin" | "User" | "Vendor" | "Viewer";
 
 export type AreaType = "Crating" | "Holding";
@@ -160,6 +166,34 @@ export interface Booking {
     createdByUserId: number | null;     // CreatedBy_User_Id (FK to auth.User)
 }
 
+
+export interface BookingSwap {
+    bookingSwapId: number;        // BookingSwap_Id
+    fromBookingId: number;        // From_Booking_Id
+    toBookingId: number;          // To_Booking_Id
+
+    swapType: BookingSwapType;    // SwapType
+
+    fromOldAreaId: number;        // From_OldArea_Id
+    fromOldStart: ISODateTimeString;
+    fromOldEnd: ISODateTimeString;
+
+    fromNewAreaId: number;        // From_NewArea_Id
+    fromNewStart: ISODateTimeString;
+    fromNewEnd: ISODateTimeString;
+
+    toOldAreaId: number | null;   // To_OldArea_Id
+    toOldStart: ISODateTimeString | null;
+    toOldEnd: ISODateTimeString | null;
+
+    toNewAreaId: number;          // To_NewArea_Id
+    toNewStart: ISODateTimeString;
+    toNewEnd: ISODateTimeString;
+
+    reason: string | null;        // Reason
+    performedBy: string | null;   // PerformedBy
+    performedAt: ISODateTimeString; // PerformedAt
+}
 
 
 export interface CratingJobStage {
