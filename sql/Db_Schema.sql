@@ -1,4 +1,25 @@
+/* ============================================
+   OPTIONAL: create database CPS_Core
+   ============================================ */
+-- CREATE DATABASE CPS_Core;
+-- GO
+-- USE CPS_Core;
+-- GO
 
+/* ============================================
+   SCHEMAS
+   ============================================ */
+-- CREATE SCHEMA ref;
+-- GO
+
+-- CREATE SCHEMA core;
+-- GO
+
+-- CREATE SCHEMA ops;
+-- GO
+
+-- CREATE SCHEMA auth;
+-- GO
 
 /* ============================================
    REFERENCE TABLES (ref.*)

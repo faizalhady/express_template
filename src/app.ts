@@ -6,7 +6,6 @@ import { connectDB } from "./config/db";
 import { errorHandler } from "./middlewares/errorMiddleware";
 import areaRoute from "./routes/areaRoutes";
 import bookingRoute from "./routes/bookingRoutes";
-import bookingSwapRoutes from "./routes/bookingSwapRoutes";
 import exampleRoutes from "./routes/exampleRoute";
 import healthRoute from "./routes/healthRoute";
 import jobBookingRoute from "./routes/jobBookingRoute";
@@ -52,7 +51,6 @@ app.use("/api/plants", plantRoute)
 app.use("/api/vendors", vendorRoute)
 app.use("/api/workcells", workcellRoute)
 app.use("/api/jobs-with-booking", jobBookingRoute)
-app.use("/api/bookings/swaps", bookingSwapRoutes)
 
 /* -------------------------------------------------
    🚫 404 Catcher

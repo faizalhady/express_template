@@ -4,7 +4,6 @@ Content-Type: application/json
 
 {
   "areaId": 1,
-  "jobId": null,
   "startDateTime": "2025-11-20T10:00:00.000Z",
   "endDateTime": "2025-11-20T12:00:00.000Z"
 }
@@ -17,7 +16,7 @@ Content-Type: application/json
 
 {
   "areaId": 2,
-  "jobId": 5,
+  "jobId": null,
   "startDateTime": "2025-11-21T08:00:00.000Z",
   "endDateTime": "2025-11-21T10:00:00.000Z"
 }
