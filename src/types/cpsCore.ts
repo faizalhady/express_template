@@ -57,6 +57,12 @@ export type BookingSwapType =
     | "GiveSlot_CancelReceiver"   // receiver gives slot, then cancels own booking
     | "GiveSlot_RescheduleReceiver"; // receiver gives slot, then moves to new slot
 
+export type BookingSwapReqStatus =
+    | "Pending"   // waiting for receiver to approve or reject
+    | "Approved"  // receiver approved, swap already executed
+    | "Rejected"  // receiver rejected
+    | "Expired";  // auto expired (no response within time limit)
+
 
 export type RoleName = "Admin" | "SuperAdmin" | "User" | "Vendor" | "Viewer";
 
@@ -193,6 +199,54 @@ export interface BookingSwap {
     reason: string | null;        // Reason
     performedBy: string | null;   // PerformedBy
     performedAt: ISODateTimeString; // PerformedAt
+}
+
+// export interface BookingSwapReq {
+//     bookingSwapReqId: number;            // BookingSwapReq_Id
+//     fromBookingId: number | null;        // From_Booking_Id (nullable)
+//     toBookingId: number;                 // To_Booking_Id
+
+//     // Who initiated the request
+//     requestedByUserId: number;           // RequestedBy_User_Id
+
+//     // Time windows
+//     requestedAt: ISODateTimeString;      // RequestedAt
+//     expiresAt: ISODateTimeString;        // ExpiresAt
+
+//     // Lifecycle of the request
+//     status: BookingSwapReqStatus;        // Status: Pending, Approved, Rejected, Expired
+
+//     // Decision info (nullable until resolved)
+//     decisionByUserId: number | null;     // DecisionBy_User_Id
+//     decisionAt: ISODateTimeString | null;// DecisionAt
+//     decisionReason: string | null;       // DecisionReason
+
+//     // Link to the executed swap history row, if approved
+//     linkedBookingSwapId: number | null;  // Linked_BookingSwap_Id
+// }
+
+
+export interface BookingSwapReq {
+    bookingSwapReqId: number;              // BookingSwapReq_Id
+    fromBookingId: number | null;          // From_Booking_Id (nullable for "new booking" scenario, future)
+    toBookingId: number;                   // To_Booking_Id
+
+    requestedType: BookingSwapType;        // RequestedType (currently just defaulted, decision is at approval time)
+    requestedByUserId: number;             // RequestedBy_User_Id
+    requestedAt: ISODateTimeString;        // RequestedAt
+    expiresAt: ISODateTimeString;          // ExpiresAt
+
+    status: BookingSwapReqStatus;          // Status
+
+    decisionByUserId: number | null;       // DecisionBy_User_Id
+    decisionAt: ISODateTimeString | null;  // DecisionAt
+    decisionReason: string | null;         // DecisionReason
+
+    receiverNewSlotAreaId: number | null;        // Receiver_NewSlot_AreaId
+    receiverNewSlotStart: ISODateTimeString | null; // Receiver_NewSlot_Start
+    receiverNewSlotEnd: ISODateTimeString | null;   // Receiver_NewSlot_End
+
+    linkedBookingSwapId: number | null;    // Linked_BookingSwap_Id (FK to core.BookingSwap)
 }
 
 

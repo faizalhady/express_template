@@ -1,8 +1,22 @@
-import { approveBookingSwap } from "@/controllers/bookingSwapController"
-import { Router } from "express"
+// src/routes/bookingSwapRoutes.ts
 
-const router = Router()
+import { approveBookingSwap } from "@/controllers/bookingSwapController"; // legacy direct swap (optional)
+import {
+    approveSwapRequestController,
+    createExistingSwapRequestController,
+    rejectSwapRequestController,
+} from "@/controllers/bookingSwapReqController";
+import { Router } from "express";
 
-router.post("/approve", approveBookingSwap)
+const router = Router();
 
-export default router
+// Legacy direct approve (no request object)
+// You can remove this once the UI fully uses requests.
+router.post("/approve", approveBookingSwap);
+
+// New flow: swap requests + receiver decision
+router.post("/requests/existing", createExistingSwapRequestController);
+router.post("/requests/:id/approve", approveSwapRequestController);
+router.post("/requests/:id/reject", rejectSwapRequestController);
+
+export default router;

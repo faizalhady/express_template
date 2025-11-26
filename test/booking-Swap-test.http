@@ -1,156 +1,113 @@
 ###############################################
-# ENV
+# 0) CREATE TWO BOOKINGS FIRST
 ###############################################
-@baseUrl = http://localhost:5000/api
 
-# These will be updated after creation
-@bookingA = 1
-@bookingB = 2
-
-###############################################################
-# 0) CLEAN TABLES (optional)
-# Use only on local DB!
-###############################################################
-### TRUNCATE TABLES
-POST {{baseUrl}}/dev-utils/clear-core  # Only if you made a dev endpoint
-###
-
-
-###############################################################
-# 1) CREATE TWO BOOKINGS
-# These will be used to test swapping
-###############################################################
-
-### CREATE BOOKING A  (Requester)
-POST {{baseUrl}}/jobs-with-booking
+### Create Booking A (Requester)
+POST http://localhost:5000/api/bookings
 Content-Type: application/json
 
 {
-  "serialNumber": "SN-A-001",
-  "model": "MODEL-A",
-  "workcellId": 1,
-  "vendorId": 1,
   "areaId": 1,
-  "startDateTime": "2025-12-01T10:00:00Z",
-  "endDateTime": "2025-12-01T11:00:00Z"
+  "workcellId": 10,
+  "vendorId": 5,
+  "serialNumber": "SN-A001",
+  "startDateTime": "2025-11-30T02:00:00.000Z",
+  "endDateTime": "2025-11-30T04:00:00.000Z",
+  "createdByUserId": 1
 }
 
-### After running, set:
-# @bookingA = <response.booking.bookingId>
-
-### CREATE BOOKING B (Receiver — target slot, 4-hour rule ok)
-POST {{baseUrl}}/jobs-with-booking
+### Create Booking B (Receiver)
+POST http://localhost:5000/api/bookings
 Content-Type: application/json
 
 {
-  "serialNumber": "SN-B-001",
-  "model": "MODEL-B",
-  "workcellId": 2,
-  "vendorId": 2,
   "areaId": 2,
-  "startDateTime": "2025-12-01T17:00:00Z",
-  "endDateTime": "2025-12-01T18:00:00Z"
+  "workcellId": 12,
+  "vendorId": 7,
+  "serialNumber": "SN-B001",
+  "startDateTime": "2025-11-30T06:00:00.000Z",
+  "endDateTime": "2025-11-30T08:00:00.000Z",
+  "createdByUserId": 2
 }
 
-### After running, set:
-# @bookingB = <response.booking.bookingId>
+###############################################
+# 1) CREATE SWAP REQUEST (NEUTRAL)
+###############################################
 
-
-###############################################################
-# 2) GET BOOKINGS
-###############################################################
-
-### GET BOOKING A
-GET {{baseUrl}}/bookings/{{bookingA}}
-
-### GET BOOKING B
-GET {{baseUrl}}/bookings/{{bookingB}}
-
-
-
-###############################################################
-# SCENARIO 1:
-# "SwapSlots" – both users simply exchange booking slots
-###############################################################
-
-### SWAP SLOTS
-POST {{baseUrl}}/bookings/swaps/approve
+### Request: A (from) wants B (to)'s slot
+POST http://localhost:5000/api/booking-swap/requests/existing
 Content-Type: application/json
 
 {
-  "fromBookingId": {{bookingA}},
-  "toBookingId": {{bookingB}},
+  "fromBookingId": 101,
+  "toBookingId": 102,
+  "requestedByUserId": 1,
+  "expiresInMinutes": 60
+}
+
+# NOTE:
+#  - Adjust booking ids 101 / 102 to real IDs returned from step 0.
+#  - Response will include bookingSwapReqId. Use that below.
+
+
+###############################################
+# 2) APPROVE AS: SwapSlots
+###############################################
+
+### Approve requestId = 1 with decisionType = SwapSlots
+POST http://localhost:5000/api/booking-swap/requests/1/approve
+Content-Type: application/json
+
+{
+  "approverUserId": 2,
+  "approverUserName": "NTID_APPROVER",
   "decisionType": "SwapSlots",
-  "reason": "Requester and receiver agreed to swap slots"
+  "reason": "Normal slot swap"
 }
 
-### CHECK RESULTS
-GET {{baseUrl}}/bookings/{{bookingA}}
-GET {{baseUrl}}/bookings/{{bookingB}}
+###############################################
+# 3) APPROVE AS: GiveSlot_CancelReceiver
+###############################################
 
-
-
-###############################################################
-# (RESET IF NEEDED)
-# Recreate Bookings A and B again IF you want each scenario isolated.
-###############################################################
-
-
-
-###############################################################
-# SCENARIO 2:
-# "GiveSlot_CancelReceiver"
-# Receiver gives their slot to requester AND their own booking becomes Cancelled
-###############################################################
-
-### APPROVE: CANCEL RECEIVER
-POST {{baseUrl}}/bookings/swaps/approve
+### Approve requestId = 2 with decisionType = GiveSlot_CancelReceiver
+POST http://localhost:5000/api/booking-swap/requests/2/approve
 Content-Type: application/json
 
 {
-  "fromBookingId": {{bookingA}},
-  "toBookingId": {{bookingB}},
+  "approverUserId": 2,
+  "approverUserName": "NTID_APPROVER",
   "decisionType": "GiveSlot_CancelReceiver",
-  "reason": "Receiver allows requester to take his slot and cancels"
+  "reason": "Receiver does not need the slot anymore"
 }
 
-### CHECK RESULTS
-GET {{baseUrl}}/bookings/{{bookingA}}
-GET {{baseUrl}}/bookings/{{bookingB}}
+###############################################
+# 4) APPROVE AS: GiveSlot_RescheduleReceiver
+###############################################
 
-
-
-###############################################################
-# SCENARIO 3:
-# "GiveSlot_RescheduleReceiver"
-# Receiver gives their slot to requester AND chooses a brand new slot
-###############################################################
-
-### APPROVE: RECEIVER RESCHEDULES THEMSELVES
-POST {{baseUrl}}/bookings/swaps/approve
+### Approve requestId = 3 with decisionType = GiveSlot_RescheduleReceiver
+POST http://localhost:5000/api/booking-swap/requests/3/approve
 Content-Type: application/json
 
 {
-  "fromBookingId": {{bookingA}},
-  "toBookingId": {{bookingB}},
+  "approverUserId": 2,
+  "approverUserName": "NTID_APPROVER",
   "decisionType": "GiveSlot_RescheduleReceiver",
-  "receiverNewAreaId": 3,
-  "receiverNewStart": "2025-12-02T14:00:00Z",
-  "receiverNewEnd": "2025-12-02T15:00:00Z",
-  "reason": "Receiver wants a later slot"
+  "receiverNewSlotAreaId": 5,
+  "receiverNewSlotStart": "2025-11-30T03:00:00.000Z",
+  "receiverNewSlotEnd": "2025-11-30T05:00:00.000Z",
+  "reason": "Receiver will move to a later slot"
 }
 
-### CHECK RESULTS
-GET {{baseUrl}}/bookings/{{bookingA}}
-GET {{baseUrl}}/bookings/{{bookingB}}
+###############################################
+# 5) REJECT SWAP REQUEST
+###############################################
 
+### Reject requestId = 4
+POST http://localhost:5000/api/booking-swap/requests/4/reject
+Content-Type: application/json
 
-
-###############################################################
-# VIEW SWAP LOGS (OPTIONAL)
-###############################################################
-GET {{baseUrl}}/bookings/swaps/logs?fromBookingId={{bookingA}}&toBookingId={{bookingB}}
-
-###############################################################
-# END
-###############################################################
+{
+  "approverUserId": 2,
+  "approverUserName": "NTID_APPROVER",
+  "reason": "Slot not suitable"
+}
