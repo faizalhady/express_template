@@ -114,6 +114,7 @@ export async function createJobWithBooking(
         }).catch(() => { })
 
         // 3) Format response
+        // 3) Format response + add METADATA for socket events
         return sendSuccess(
             res,
             {
@@ -121,8 +122,18 @@ export async function createJobWithBooking(
                 booking: toBookingDto(booking),
                 initialStage,
             },
-            "Job, booking, and initial stage created successfully"
+            "Job, booking, and initial stage created successfully",
+            {
+                event: "jobBooking.created",         // <-- event name
+                jobId: job.jobId,                    // <-- useful identifiers
+                bookingId: booking.bookingId,
+                workcellId,
+                areaId,
+                triggeredBy: createdByUsername,
+                timestamp: new Date().toISOString(), // <-- always include timestamp
+            }
         )
+
     } catch (err) {
         next(err)
     }
