@@ -2,9 +2,9 @@
 
 import { safeLogActivity } from "@/queries/activityLogQueries"
 import { insertJobWithBooking } from "@/queries/jobWithBookingQueries"
-import { toBookingDto } from "@/types/bookings"
-import type { ISODateTimeString } from "@/types/cpsCore"
-import { toCratingJobDto } from "@/types/job"
+import { toBookingDto } from "@/types/bookingsTypes"
+import type { ISODateTimeString } from "@/types/cpsCoreTypes"
+import { toCratingJobDto } from "@/types/jobTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 

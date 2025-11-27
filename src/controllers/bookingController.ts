@@ -6,12 +6,12 @@ import {
     insertBooking,
 } from "@/queries/bookingQueries"
 import { changeBookingStatus } from "@/services/bookingStatusService"
-import type { UpdateBookingStatusBody } from "@/types/bookings"
 import {
     type CreateBookingBody,
     type ListBookingsQuery,
+    type UpdateBookingStatusBody,
     toBookingDto,
-} from "@/types/bookings"
+} from "@/types/bookingsTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 
@@ -43,7 +43,7 @@ export async function createBooking(
             })
         }
 
-        const createdBy = "system" // TODO: later from auth
+        const createdBy = "system"
 
         // ✅ Build input without jobId when it's undefined
         const bookingInput: {

@@ -1,12 +1,12 @@
 // src/queries/areaOverviewQueries.ts
 import { connectDB, sql } from "@/config/db"
-import type { AreaOverviewDto } from "@/types/areaOverview"
+import type { AreaOverviewDto } from "@/types/areaOverviewTypes"
 import type {
   AreaStatus,
   AreaType,
   BookingStatus,
   CratingJobStatus,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 export interface AreaOverviewFilter {
   plantId?: number

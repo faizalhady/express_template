@@ -1,7 +1,7 @@
 // src/queries/bookingQueries.ts
 
 import { connectDB, sql } from "@/config/db"
-import type { Booking, BookingStatus, ISODateTimeString } from "@/types/cpsCore"
+import type { Booking, BookingStatus, ISODateTimeString } from "@/types/cpsCoreTypes"
 
 export interface BookingFilter {
   areaId?: number

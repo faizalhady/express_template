@@ -5,7 +5,7 @@ import type {
     BookingStatus,
     CratingJobStatus,
     ISODateTimeString,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 /**
  * One item = one area tile on your dashboard

@@ -4,7 +4,7 @@ import type {
     AreaStatus,
     AreaType,
     ISODateTimeString,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 /* --------------------------------------------
    Query params for GET /api/areas

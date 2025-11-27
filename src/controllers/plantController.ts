@@ -1,6 +1,6 @@
 // src/controllers/plantController.ts
 import { findPlantById, findPlants } from "@/queries/plantQueries"
-import { toPlantDto, type ListPlantsQuery } from "@/types/plant"
+import { toPlantDto, type ListPlantsQuery } from "@/types/plantTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 

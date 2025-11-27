@@ -4,7 +4,7 @@ import { findAreaById, findAreas, type AreaFilter } from "@/queries/areaQueries"
 import {
     toAreaDto,
     type ListAreasQuery,
-} from "@/types/area"
+} from "@/types/areaTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 

@@ -7,7 +7,7 @@ import {
 import {
     toWorkcellDto,
     type ListWorkcellsQuery,
-} from "@/types/workcell"
+} from "@/types/workcellTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 

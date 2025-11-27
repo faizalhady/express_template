@@ -1,6 +1,6 @@
 // src/controllers/vendorScanController.ts
 import { changeJobStatus } from "@/services/jobStatusService"
-import { toCratingJobDto } from "@/types/job"
+import { toCratingJobDto } from "@/types/jobTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 

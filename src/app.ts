@@ -1,3 +1,4 @@
+import bookingSwapRoutes from "@/routes/bookingSwapRoutes";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
@@ -51,6 +52,7 @@ app.use("/api/plants", plantRoute)
 app.use("/api/vendors", vendorRoute)
 app.use("/api/workcells", workcellRoute)
 app.use("/api/jobs-with-booking", jobBookingRoute)
+app.use("/api/booking-swap", bookingSwapRoutes);
 
 /* -------------------------------------------------
    🚫 404 Catcher

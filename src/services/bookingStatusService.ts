@@ -2,7 +2,7 @@
 
 import { safeLogActivity } from "@/queries/activityLogQueries"
 import { findBookingById, updateBookingStatus } from "@/queries/bookingQueries"
-import type { Booking, BookingStatus } from "@/types/cpsCore"
+import type { Booking, BookingStatus } from "@/types/cpsCoreTypes"
 
 export interface ChangeBookingStatusOptions {
     userId: string

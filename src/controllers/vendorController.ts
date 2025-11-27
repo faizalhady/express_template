@@ -1,6 +1,6 @@
 // src/controllers/vendorController.ts
 import { findVendorById, findVendors, type VendorFilter } from "@/queries/vendorQueries"
-import { toVendorDto, type ListVendorsQuery } from "@/types/vendor"
+import { toVendorDto, type ListVendorsQuery } from "@/types/vendorTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 

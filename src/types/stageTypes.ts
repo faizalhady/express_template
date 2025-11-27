@@ -3,7 +3,7 @@ import type {
     CratingJobStage,
     CratingJobStageName,
     ISODateTimeString,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 /* --------------------------------------------
    Query params for GET /api/jobs/:id/stages

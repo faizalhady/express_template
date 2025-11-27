@@ -1,5 +1,5 @@
 // src/types/workcell.ts
-import type { Workcell } from "@/types/cpsCore"
+import type { Workcell } from "@/types/cpsCoreTypes"
 
 export interface ListWorkcellsQuery {
     isActive?: string  // "true" | "false"

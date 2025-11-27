@@ -7,13 +7,13 @@ import {
     type JobFilter
 } from "@/queries/jobQueries"
 import { changeJobStatus } from "@/services/jobStatusService"
-import type { CratingJobStatus } from "@/types/cpsCore"
+import type { CratingJobStatus } from "@/types/cpsCoreTypes"
 import {
     toCratingJobDto,
     type CreateJobBody,
     type ListJobsQuery,
     type UpdateJobStatusBody,
-} from "@/types/job"
+} from "@/types/jobTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 

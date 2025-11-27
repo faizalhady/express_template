@@ -4,7 +4,7 @@ import type {
     ActivityEntityType,
     ActivityLog,
     ISODateTimeString,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 /* --------------------------------------------
    Input type for writing logs

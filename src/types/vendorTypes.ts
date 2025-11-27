@@ -1,5 +1,5 @@
 // src/types/vendor.ts
-import type { Vendor } from "@/types/cpsCore"
+import type { Vendor } from "@/types/cpsCoreTypes"
 
 export interface ListVendorsQuery {
     isActive?: string  // "true" | "false"

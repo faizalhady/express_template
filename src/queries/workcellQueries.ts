@@ -1,31 +1,31 @@
 // src/queries/workcellQueries.ts
 import { connectDB, sql } from "@/config/db"
-import type { Workcell } from "@/types/cpsCore"
+import type { Workcell } from "@/types/cpsCoreTypes"
 
 export interface WorkcellFilter {
-    isActive?: boolean
-    search?: string
+  isActive?: boolean
+  search?: string
 }
 
 export async function findWorkcells(
-    filter: WorkcellFilter = {}
+  filter: WorkcellFilter = {}
 ): Promise<Workcell[]> {
-    const pool = await connectDB()
-    const request = pool.request()
+  const pool = await connectDB()
+  const request = pool.request()
 
-    let where = "1 = 1"
+  let where = "1 = 1"
 
-    if (filter.isActive !== undefined) {
-        where += " AND IsActive = @IsActive"
-        request.input("IsActive", sql.Bit, filter.isActive ? 1 : 0)
-    }
+  if (filter.isActive !== undefined) {
+    where += " AND IsActive = @IsActive"
+    request.input("IsActive", sql.Bit, filter.isActive ? 1 : 0)
+  }
 
-    if (filter.search) {
-        where += " AND WorkcellName LIKE @Search"
-        request.input("Search", sql.VarChar, `%${filter.search}%`)
-    }
+  if (filter.search) {
+    where += " AND WorkcellName LIKE @Search"
+    request.input("Search", sql.VarChar, `%${filter.search}%`)
+  }
 
-    const result = await request.query<Workcell>(`
+  const result = await request.query<Workcell>(`
     SELECT
       Workcell_Id   AS workcellId,
       WorkcellName  AS workcellName,
@@ -37,18 +37,18 @@ export async function findWorkcells(
     ORDER BY WorkcellName ASC;
   `)
 
-    return result.recordset
+  return result.recordset
 }
 
 export async function findWorkcellById(
-    workcellId: number
+  workcellId: number
 ): Promise<Workcell | null> {
-    const pool = await connectDB()
+  const pool = await connectDB()
 
-    const result = await pool
-        .request()
-        .input("Workcell_Id", sql.Int, workcellId)
-        .query<Workcell>(`
+  const result = await pool
+    .request()
+    .input("Workcell_Id", sql.Int, workcellId)
+    .query<Workcell>(`
       SELECT
         Workcell_Id   AS workcellId,
         WorkcellName  AS workcellName,
@@ -59,7 +59,7 @@ export async function findWorkcellById(
       WHERE Workcell_Id = @Workcell_Id;
     `)
 
-    const row = result.recordset[0]
-    if (!row) return null
-    return row
+  const row = result.recordset[0]
+  if (!row) return null
+  return row
 }

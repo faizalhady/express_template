@@ -12,7 +12,7 @@ import type {
     CratingJob,
     CratingJobStageName,
     CratingJobStatus,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 export interface ChangeJobStatusOptions {
     userId: string

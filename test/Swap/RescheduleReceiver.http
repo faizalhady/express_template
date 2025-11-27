@@ -1,0 +1,62 @@
+@baseUrl = http://localhost:5000/api
+
+### 1. Create Booking A (requester)
+POST {{baseUrl}}/jobs-with-booking
+Content-Type: application/json
+
+{
+  "serialNumber": "RESCHED-A-001",
+  "model": "MODEL-A",
+  "workcellId": 1,
+  "vendorId": 1,
+  "areaId": 1,
+  "startDateTime": "2025-12-01T08:00:00Z",
+  "endDateTime": "2025-12-01T09:00:00Z"
+}
+
+### 2. Create Booking B (receiver)
+POST {{baseUrl}}/jobs-with-booking
+Content-Type: application/json
+
+{
+  "serialNumber": "RESCHED-B-001",
+  "model": "MODEL-B",
+  "workcellId": 2,
+  "vendorId": 1,
+  "areaId": 2,
+  "startDateTime": "2025-12-01T10:00:00Z",
+  "endDateTime": "2025-12-01T11:00:00Z"
+}
+
+### 3. Create Swap Request with new receiver slot
+POST {{baseUrl}}/booking-swap/request
+Content-Type: application/json
+
+{
+  "fromBookingId": 1,
+  "toBookingId": 2,
+  "requestedByUserId": 10,
+  "expiresInMinutes": 60,
+  "receiverNewAreaId": 3,
+  "receiverNewStart": "2025-12-01T12:00:00Z",
+  "receiverNewEnd": "2025-12-01T13:00:00Z"
+}
+
+### 4. Approve GiveSlot_RescheduleReceiver
+POST {{baseUrl}}/booking-swap/request/approve
+Content-Type: application/json
+
+{
+  "swapReqId": 1,
+  "approverUserId": 99,
+  "decisionType": "GiveSlot_RescheduleReceiver",
+  "receiverNewAreaId": 3,
+  "receiverNewStart": "2025-12-01T12:00:00Z",
+  "receiverNewEnd": "2025-12-01T13:00:00Z"
+}
+
+### 5. Get Swap History for Booking A
+GET {{baseUrl}}/booking-swap/history/booking/1
+
+### 6. Get Swap History for Booking B
+GET {{baseUrl}}/booking-swap/history/booking/2

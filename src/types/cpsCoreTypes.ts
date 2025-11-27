@@ -53,15 +53,16 @@ export type ActivityEntityType =
     | "Plant";
 
 export type BookingSwapType =
-    | "SwapSlots"                 // both parties swap slots
-    | "GiveSlot_CancelReceiver"   // receiver gives slot, then cancels own booking
-    | "GiveSlot_RescheduleReceiver"; // receiver gives slot, then moves to new slot
+    | "SwapSlots"
+    | "GiveSlot_CancelReceiver"
+    | "GiveSlot_RescheduleReceiver";
+
 
 export type BookingSwapReqStatus =
-    | "Pending"   // waiting for receiver to approve or reject
-    | "Approved"  // receiver approved, swap already executed
-    | "Rejected"  // receiver rejected
-    | "Expired";  // auto expired (no response within time limit)
+    | "Pending"
+    | "Approved"
+    | "Rejected"
+    | "Expired";
 
 
 export type RoleName = "Admin" | "SuperAdmin" | "User" | "Vendor" | "Viewer";
@@ -173,83 +174,6 @@ export interface Booking {
 }
 
 
-export interface BookingSwap {
-    bookingSwapId: number;        // BookingSwap_Id
-    fromBookingId: number;        // From_Booking_Id
-    toBookingId: number;          // To_Booking_Id
-
-    swapType: BookingSwapType;    // SwapType
-
-    fromOldAreaId: number;        // From_OldArea_Id
-    fromOldStart: ISODateTimeString;
-    fromOldEnd: ISODateTimeString;
-
-    fromNewAreaId: number;        // From_NewArea_Id
-    fromNewStart: ISODateTimeString;
-    fromNewEnd: ISODateTimeString;
-
-    toOldAreaId: number | null;   // To_OldArea_Id
-    toOldStart: ISODateTimeString | null;
-    toOldEnd: ISODateTimeString | null;
-
-    toNewAreaId: number;          // To_NewArea_Id
-    toNewStart: ISODateTimeString;
-    toNewEnd: ISODateTimeString;
-
-    reason: string | null;        // Reason
-    performedBy: string | null;   // PerformedBy
-    performedAt: ISODateTimeString; // PerformedAt
-}
-
-// export interface BookingSwapReq {
-//     bookingSwapReqId: number;            // BookingSwapReq_Id
-//     fromBookingId: number | null;        // From_Booking_Id (nullable)
-//     toBookingId: number;                 // To_Booking_Id
-
-//     // Who initiated the request
-//     requestedByUserId: number;           // RequestedBy_User_Id
-
-//     // Time windows
-//     requestedAt: ISODateTimeString;      // RequestedAt
-//     expiresAt: ISODateTimeString;        // ExpiresAt
-
-//     // Lifecycle of the request
-//     status: BookingSwapReqStatus;        // Status: Pending, Approved, Rejected, Expired
-
-//     // Decision info (nullable until resolved)
-//     decisionByUserId: number | null;     // DecisionBy_User_Id
-//     decisionAt: ISODateTimeString | null;// DecisionAt
-//     decisionReason: string | null;       // DecisionReason
-
-//     // Link to the executed swap history row, if approved
-//     linkedBookingSwapId: number | null;  // Linked_BookingSwap_Id
-// }
-
-
-export interface BookingSwapReq {
-    bookingSwapReqId: number;              // BookingSwapReq_Id
-    fromBookingId: number | null;          // From_Booking_Id (nullable for "new booking" scenario, future)
-    toBookingId: number;                   // To_Booking_Id
-
-    requestedType: BookingSwapType;        // RequestedType (currently just defaulted, decision is at approval time)
-    requestedByUserId: number;             // RequestedBy_User_Id
-    requestedAt: ISODateTimeString;        // RequestedAt
-    expiresAt: ISODateTimeString;          // ExpiresAt
-
-    status: BookingSwapReqStatus;          // Status
-
-    decisionByUserId: number | null;       // DecisionBy_User_Id
-    decisionAt: ISODateTimeString | null;  // DecisionAt
-    decisionReason: string | null;         // DecisionReason
-
-    receiverNewSlotAreaId: number | null;        // Receiver_NewSlot_AreaId
-    receiverNewSlotStart: ISODateTimeString | null; // Receiver_NewSlot_Start
-    receiverNewSlotEnd: ISODateTimeString | null;   // Receiver_NewSlot_End
-
-    linkedBookingSwapId: number | null;    // Linked_BookingSwap_Id (FK to core.BookingSwap)
-}
-
-
 export interface CratingJobStage {
     stageId: number;                 // Stage_Id
     jobId: number;                   // Job_Id FK
@@ -273,4 +197,59 @@ export interface ActivityLog {
     newValue: string | null;         // NewValue (JSON string)
     userId: string | null;           // UserID (username)
     timestamp: ISODateTimeString;    // Timestamp
+}
+
+export interface BookingSwap {
+    bookingSwapId: number;
+
+    fromBookingId: number | null;
+    toBookingId: number;
+    swapType: BookingSwapType;
+
+    fromOldAreaId: number | null;
+    fromOldStart: string | null;
+    fromOldEnd: string | null;
+
+    fromNewAreaId: number | null;
+    fromNewStart: string | null;
+    fromNewEnd: string | null;
+
+    toOldAreaId: number | null;
+    toOldStart: string | null;
+    toOldEnd: string | null;
+
+    toNewAreaId: number | null;
+    toNewStart: string | null;
+    toNewEnd: string | null;
+
+    reason: string | null;
+    performedBy: string | null;
+    performedAt: string; // datetime
+}
+
+
+
+export interface BookingSwapReq {
+    bookingSwapReqId: number;
+
+    fromBookingId: number | null;
+    toBookingId: number;
+
+    requestedByUserId: number;
+    requestedAt: string; // datetime2
+    expiresAt: string; // datetime2
+
+    status: "Pending" | "Approved" | "Rejected" | "Expired";
+
+    decisionByUserId: number | null;
+    decisionAt: string | null;
+    decisionReason: string | null;
+
+    linkedBookingSwapId: number | null;
+
+    decisionType: BookingSwapType | null;
+
+    receiverNewAreaId: number | null;
+    receiverNewStart: string | null;
+    receiverNewEnd: string | null;
 }

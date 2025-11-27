@@ -1,5 +1,5 @@
 // src/types/plant.ts
-import type { Plant } from "@/types/cpsCore"
+import type { Plant } from "@/types/cpsCoreTypes"
 
 /* Query params for GET /api/plants (simple for now) */
 export interface ListPlantsQuery {

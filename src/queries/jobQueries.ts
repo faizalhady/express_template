@@ -5,7 +5,7 @@ import type {
   CratingJob,
   CratingJobStatus,
   ISODateTimeString,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 /* --------------------------------------------
    Filter type for listing jobs

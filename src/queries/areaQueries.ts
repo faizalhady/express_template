@@ -4,7 +4,7 @@ import type {
     Area,
     AreaStatus,
     AreaType,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 export interface AreaFilter {
     plantId?: number

@@ -5,7 +5,7 @@ import type {
     CratingJobStage,
     CratingJobStageName,
     ISODateTimeString,
-} from "@/types/cpsCore"
+} from "@/types/cpsCoreTypes"
 
 /* --------------------------------------------
    Filter for listing stages of a job

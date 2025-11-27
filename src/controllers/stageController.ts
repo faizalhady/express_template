@@ -5,12 +5,12 @@ import {
     insertJobStage,
     type StageFilter,
 } from "@/queries/stageQueries"
-import type { CratingJobStageName } from "@/types/cpsCore"
+import type { CratingJobStageName } from "@/types/cpsCoreTypes"
 import {
     type CreateJobStageBody,
     type ListJobStagesQuery,
     toCratingJobStageDto,
-} from "@/types/stage"
+} from "@/types/stageTypes"
 import { sendSuccess } from "@/utils/responseHandler"
 import type { NextFunction, Request, Response } from "express"
 

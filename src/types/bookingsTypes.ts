@@ -1,4 +1,4 @@
-import type { Booking, BookingStatus, ISODateTimeString } from "@/types/cpsCore"
+import type { Booking, BookingStatus, ISODateTimeString } from "@/types/cpsCoreTypes"
 
 /* --------------------------------------------
    Request body for POST /api/bookings
